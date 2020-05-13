@@ -2,6 +2,10 @@
 
 #include"main.h"
 
+#include"score.h"
+
+#include"player.h"
+
 // 変数の定義
 int gameCounter;	//ゲーム用カウンター
 int titleImage;		//ﾀｲﾄﾙの画像格納用
@@ -12,15 +16,6 @@ int titlePosY;	//タイトル画像の縦軸の位置
 int gameoverPosX;	//ゲームオーバー画像の横軸の位置
 int gameoverPosY;	//ゲームオーバー画像の縦軸の位置
 int systemScene;	//シーンの状態格納用
-int score[SCR_MAX];	//スコア保存用
-
-//ﾌﾟﾚｲﾔｰの変数
-int PlayerImage[PLAYER_STYLE_MAX][PLAYER_ANI_MAX];	//ﾌﾟﾚｲﾔｰの画像格納用
-int PlayerPosX;		//ﾌﾟﾚｲﾔｰのX座標
-int PlayerPosY;		//ﾌﾟﾚｲﾔｰのY座標
-int PlayerSpeed;	//ﾌﾟﾚｲﾔｰのｽﾋﾟｰﾄﾞ
-bool PlayerFlag;		//ﾌﾟﾚｲﾔｰのﾌﾗｸﾞ
-int PlayerLife;		//残機
 
 //敵の変数
 int EnemyImage[ENEMY_TYPE_MAX][ENEMY_ANI_MAX];	//敵の画像格納用
@@ -35,12 +30,13 @@ int EnemyCount;	//敵の数
 int enemyAddSpeed;	//敵機の移動速度に加える速度
 
 //弾の変数
-//ﾌﾟﾚｲﾔｰ
+//プレイヤー
 int PShotImage;	//プレイヤーの弾の画像格納用
 int PShotPosX;	//プレイヤーの弾の横軸の位置
 int PShotPosY;	//プレイヤーの弾の縦軸の位置
 int PShotSpeed;	//プレイヤーの弾の移動速度
 bool PShotFlag;	//プレイヤーの弾の発射状態
+
 //敵
 int EShotImage;	//敵の弾の画像格納用
 int EShotPosX[ESHOT_MAX];	//敵の弾の横軸位置
@@ -49,11 +45,6 @@ int EShotSpeed;	//敵の弾の速度
 bool EShotFlag[ESHOT_MAX];	//敵の弾の状態
 
 //爆発
-int playerbakuImage[BAKU_ANI];	//爆発画像格納用
-int playerbakuPosX;	//爆発画像の横軸位置
-int playerbakuPosY;	//爆発画像の縦軸位置
-int playerbakuAni;	//爆発のアニメーション用
-bool playerbakuFlag;	//爆発画像の状態
 int enemybakuImage[BAKU_ANI];	//爆発画像格納用
 int enemybakuPosX;	//爆発画像の横軸位置
 int enemybakuPosY;	//爆発画像の縦軸位置
@@ -178,6 +169,8 @@ bool SystemInit(void)
 	SetDrawScreen(DX_SCREEN_BACK);
 
 	// ｸﾞﾗﾌｨｯｸの登録
+	PlayerSystemInit();
+
 	//敵の弾
 	EShotImage = LoadGraph("image/eshot.png");
 	if (LoadGraph("image/eshot.png") == -1)
@@ -185,13 +178,7 @@ bool SystemInit(void)
 		AST();
 		retFlag = false;
 	}
-	//プレイヤー
-	LoadDivGraph("image/serval.png", PLAYER_STYLE_MAX * PLAYER_ANI_MAX, PLAYER_ANI_MAX, PLAYER_STYLE_MAX, PLAYER_SIZE_X, PLAYER_SIZE_Y, PlayerImage[0]);
-	if (LoadDivGraph("image/serval.png", PLAYER_STYLE_MAX * PLAYER_ANI_MAX, PLAYER_ANI_MAX, PLAYER_STYLE_MAX, PLAYER_SIZE_X, PLAYER_SIZE_Y, PlayerImage[0]) == -1)
-	{
-		AST();
-		retFlag = false;
-	}
+
 	//背景
 	bgImage = LoadGraph("image/bgimage.jpg");
 	if (LoadGraph("image/bgimage.jpg") == -1)
@@ -201,12 +188,6 @@ bool SystemInit(void)
 	}
 
 	//爆発
-	LoadDivGraph("image/blast.png", 24, 6, 4, BAKU_SIZE_X, BAKU_SIZE_Y, playerbakuImage);
-	if (LoadDivGraph("image/blast.png", 24, 6, 4, BAKU_SIZE_X, BAKU_SIZE_Y, playerbakuImage) == -1)
-	{
-		AST();
-		retFlag = false;
-	}
 	//敵
 	LoadDivGraph("image/cellien.png", ENEMY_TYPE_MAX * ENEMY_ANI_MAX, ENEMY_ANI_MAX, ENEMY_TYPE_MAX, ENEMY_SIZE_X, ENEMY_SIZE_Y, EnemyImage[0]);
 	if (LoadDivGraph("image/cellien.png", ENEMY_TYPE_MAX * ENEMY_ANI_MAX, ENEMY_ANI_MAX, ENEMY_TYPE_MAX, ENEMY_SIZE_X, ENEMY_SIZE_Y, EnemyImage[0])== -1)
@@ -257,14 +238,8 @@ bool SystemInit(void)
 void InitScene(void)
 {
 	// 変数の初期化
-	score[SCR_PL1] = 0;
-
 	//ﾌﾟﾚｲﾔｰ
-	PlayerPosX = (GAME_SIZE_X - PLAYER_SIZE_X) / 2;
-	PlayerPosY = (GAME_SIZE_Y - PLAYER_SIZE_Y);
-	PlayerSpeed = (PLAYER_DEF_SPEED);
-	PlayerFlag = true;
-	PlayerLife = PLAYER_DEF_LIFE;
+	PlayerGameInit();
 
 	//敵
 	for (int y = 0; y < ENEMY_Y; y++)
@@ -304,16 +279,13 @@ void InitScene(void)
 	gameoverPosY = 50;
 	gameScene = true;
 
-	//爆発
-	playerbakuPosX = PlayerPosX;
-	playerbakuPosY = PlayerPosY;
-	playerbakuAni = 0;
-	playerbakuFlag = false;
-
 	//カウント用
 	massageCnt = 0;
 	enemyMoveCnt = 0;
 	stringCnt = 0;
+
+	//スコア用
+	InitScore();
 
 	//文字表示用
 	stringFlag = false;
@@ -342,39 +314,6 @@ void TitleScene(void)
 	}
 
 	DrawTexts();
-}
-
-//プレイヤーの処理
-void playerControl(void)
-{
-
-	if (PlayerFlag == true)
-	{
-		//右移動
-		if (CheckHitKey(KEY_INPUT_NUMPAD6))
-		{
-			if (PlayerPosX  >= GAME_SIZE_X - PLAYER_SIZE_X)	//移動制限
-			{
-				PlayerPosX = GAME_SIZE_X - PLAYER_SIZE_X;
-			}
-			else
-			{
-				PlayerPosX += PlayerSpeed;
-			}
-		}
-		//左移動
-		if (CheckHitKey(KEY_INPUT_NUMPAD4))
-		{
-			if (PlayerPosX - PlayerSpeed <= 0    /*GAME_OFFSET_X*/)
-			{
-				PlayerPosX = 0;
-			}
-			else
-			{
-				PlayerPosX -= PlayerSpeed;
-			}
-		}
-	}
 }
 
 //敵の処理
@@ -733,16 +672,6 @@ void Gamescene(void)
 void GameClear(void)
 {
 	DrawGraph(0, 0, clearImage, true);
-	DrawFormatString((SCREEN_SIZE_X / 2) - 70, SCREEN_SIZE_Y / 2, 0xFF00FF, "HIGH SCORE = %d", score[SCR_HIGH]);
-	if (massageCnt % 40 >= 20)
-	{
-		DrawFormatString((SCREEN_SIZE_X / 2) - 50, (SCREEN_SIZE_Y / 2) + 20, 0xFF00FF, "SCORE = %d", score[SCR_PL1]);
-	}
-
-	if (score[SCR_PL1] >= score[SCR_HIGH] && score[SCR_PL1] != 0)
-	{
-		DrawString((SCREEN_SIZE_X - 100) / 2, (SCREEN_SIZE_Y / 2) + 40, "'New Record' ", 0xFFD700);
-	}
 
 	DrawString((SCREEN_SIZE_X - 140) / 2, SCREEN_SIZE_Y - 60, "PLEASE PUSH SPACEKEY", 0x0000FF);
 
@@ -750,6 +679,8 @@ void GameClear(void)
 	{
 		DrawString((SCREEN_SIZE_X - 240) / 2, SCREEN_SIZE_Y - 40, "スペースキーを押してタイトルに戻る", 0x000000);
 	}
+
+	EndGameDrawTexts();
 
 	if (CheckHitKey(KEY_INPUT_SPACE) == 0 && spaceKeyNew != spaceKeyOld)
 	{
@@ -774,27 +705,17 @@ void GameOverScene(void)
 	DrawString((SCREEN_SIZE_X - 190) / 2, 350, "Thank You for Playing! ", 0xFFFF00);
 	DrawString((SCREEN_SIZE_X - 180) / 2, 440, "PLEASE PUSH SPACE KEY ", 0xFFFFFF);
 
-	if (score[SCR_PL1] >= score[SCR_HIGH] && score[SCR_PL1] != 0)
-	{
-		if (massageCnt % 60 <= 20)
-		{
-			DrawString((SCREEN_SIZE_X - 100) / 2, (SCREEN_SIZE_Y / 2) + 80, "'New Record' ", 0x00FFFF);
-		}
-	}
-
 	if (massageCnt % 60 <= 40)
 	{
 		DrawString((SCREEN_SIZE_X - 225) / 2, 480, "スペースキーを押してください ", 0xFFFFFF);
 	}
 
+	EndGameDrawTexts();
+
 	if (CheckHitKey(KEY_INPUT_SPACE) == 0 && spaceKeyNew != spaceKeyOld)
 	{
 		systemScene = SCENE_INIT;
 	}
-
-
-	DrawTexts();
-
 }
 
 void gameDraw(void)
@@ -888,43 +809,6 @@ void gameDraw(void)
 		}
 	}
 	DrawTexts();
-}
-
-void DrawTexts(void)
-{
-	int drawScore;
-	int drawLengh;
-	int textColor = 0xFFFFFF;
-
-	//ハイスコア
-	DrawString((GAME_SCREEN_X + GAME_SCREEN_SIZE_X )+ 50, 70, "HIGH", textColor);
-	DrawString((GAME_SCREEN_X + GAME_SCREEN_SIZE_X) + 77, 90, "SCORE", textColor);
-
-	drawScore = (score[SCR_HIGH] >= 100000 ? 99999 : score[SCR_HIGH]);
-	drawLengh = GetDrawFormatStringWidth("%d", drawScore);
-	DrawFormatString(GAME_SCREEN_X + GAME_SCREEN_SIZE_X + 100 - drawLengh, 120, textColor, "%d", drawScore);
-
-	//PL1
-	DrawString((GAME_SCREEN_X + GAME_SCREEN_SIZE_X) + 50, 170, "SCORE", textColor);
-
-	drawScore = (score[SCR_PL1] >= 100000 ? 99999 : score[SCR_PL1]);
-	drawLengh = GetDrawFormatStringWidth("%d", drawScore);
-	DrawFormatString(GAME_SCREEN_X + GAME_SCREEN_SIZE_X + 100 - drawLengh, 200, textColor, "%d", drawScore);
-
-}
-
-
-//スコアの加算処理
-void AddScore(int num)
-{
-	//スコア処理
-	score[SCR_PL1] += num;
-
-	//スコアの更新
-	if (score[SCR_PL1] > score[SCR_HIGH])
-	{
-		score[SCR_HIGH] = score[SCR_PL1];
-	}
 }
 
 // 自機の減算処理
