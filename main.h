@@ -9,22 +9,7 @@
 #define AST()
 #endif
 
-
-//列挙型の定義
-
-//ゲームシーン用
-enum SCENE		
-{
-	SCENE_INIT,
-	SCENE_TITLE,
-	SCENE_GAME,
-	SCENE_CLEAR,
-	SCENE_GAMEOVER,
-	SCENE_MAX
-};
-
-
-
+//定数
 #define SCREEN_SIZE_X 800	//画面の横ｻｲｽﾞ
 #define SCREEN_SIZE_Y 600	//画面の縦ｻｲｽﾞ
 
@@ -77,25 +62,41 @@ enum SCENE
 #define GAME_SCREEN_SIZE_X 600	//ゲーム画面の横サイズ
 #define GAME_SCREEN_SIZE_Y 500	//ゲーム画面の縦サイズ
 
+
+//列挙型の定義
+//ゲームシーン用
+enum SCENE		
+{
+	SCENE_INIT,
+	SCENE_TITLE,
+	SCENE_GAME,
+	SCENE_CLEAR,
+	SCENE_GAMEOVER,
+	SCENE_MAX
+};
+
+//構造体
+struct XY
+{
+	int x;
+	int y;
+};
+
+
 //プロトタイプ宣言
 
 //初期化
 bool SystemInit(void);	//変数
 void InitScene(void);	//シーン
 
-//移動等の処理
-
-void EnemyControl(void);	//敵
-
 //シーン用
 void TitleScene(void);	//タイトル
 void Gamescene(void);	//ゲーム
-
-void HitObj(void);	//当たり判定
-
-
 void GameOverScene(void);	//ゲームオーバー
 void GameClear(void);	//ゲームクリア
+
+//当たり判定
+void HitObj(void);	//当たり判定
 
 //画像の描画用
 void gameDraw(void);	//画像の描画
