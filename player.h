@@ -16,8 +16,29 @@ enum PLAYER_STYLE
 
 //構造体
 
+
+
 //プロトタイプ宣言
-void PlayerSystemInit(void);	//プレイヤーの画像読み込み専用
-void PlayerGameInit(void);	//プレイヤーの変数の初期化用
-void PlayerControl(void);	//プレイヤーの移動等の処理用
+//プレイヤーの画像読み込み専用
+void PlayerSystemInit(void);	
+
+//プレイヤーの変数の初期化用
+void PlayerGameInit(void);	
+
+//プレイヤーの移動等の処理用
+void PlayerControl(void);	
+
+//プレイヤーと敵の当たり判定
+bool PlayerCheckHitEnemy(void);	
+
+//プレイヤーと敵の弾との当たり判定
+bool PlayerCheckHitEShot(void);	
+
+//プレイヤーのゲームオーバー用
+void PlayerDeathProc(void);	
+
+//ゲーム中のプレイヤーの描画用
+void PlayerGameDraw(void);	
+
+
 
