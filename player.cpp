@@ -67,14 +67,34 @@ bool PlayerCheckHitEnemy(void)
 		for (int x = 0; x < ENEMY_X; x++)
 		{
 			//敵と自機との当たり判定
-			if (EnemyFlag[y][x] == true && PlayerFlag == true)
+			if (enemyFlag[y][x] == true && playerFlag == true)
 			{
-				if (EnemyPosX[y][x] + ENEMY_SIZE_X >= PlayerPosX
-					&& EnemyPosX[y][x] <= PlayerPosX + PLAYER_SIZE_X
-					&& EnemyPosY[y][x] + ENEMY_SIZE_Y >= PlayerPosY
-					&& EnemyPosY[y][x] <= PlayerPosY + PLAYER_SIZE_Y)
+				if (enemyPosX[y][x] + ENEMY_SIZE_X >= playerPosX
+					&& enemyPosX[y][x] <= playerPosX + PLAYER_SIZE_X
+					&& enemyPosY[y][x] + ENEMY_SIZE_Y >= playerPosY
+					&& enemyPosY[y][x] <= playerPosY + PLAYER_SIZE_Y)
 				{
-					PlayerFlag = false;
+					playerFlag = false;
+					PlayerDeathProc();
+
+					if (playerLife > 0)
+					{
+						if (playerFlag == false)
+						{
+
+							for (int y = 0; y < ENEMY_Y; y++)
+							{
+								for (int x = 0; x < ENEMY_X; x++)
+								{
+									enemyPosX[y][x] = ((ENEMY_SIZE_X * 10) / 7) * x;
+									enemyPosY[y][x] = (ENEMY_SIZE_Y * 9 / 7) * y;
+									enemyType[y][x] = (ENEMY_TYPE)((y % (ENEMY_TYPE_MAX - 1)) + 1);
+								}
+							}
+							playerFlag = true;
+						}
+					}
+
 					return true;
 
 					/*else if (PlayerLife == 0)
@@ -95,17 +115,17 @@ bool PlayerCheckHitEShot(void)
 	//敵の弾と自機との当たり判定
 	for (int e = 0; e < ESHOT_MAX; e++)
 	{
-		if (EShotFlag[e] == true && PlayerFlag == true)
+		if (eShotFlag[e] == true && playerFlag == true)
 		{
 
-			if (EShotPosX[e] + ESHOT_SIZE_X >= PlayerPosX
-				&& EShotPosX[e] <= PlayerPosX + PLAYER_SIZE_X
-				&& EShotPosY[e] + ESHOT_SIZE_Y >= PlayerPosY
-				&& EShotPosY[e] <= PlayerPosY + PLAYER_SIZE_Y)
+			if (eShotPosX[e] + ESHOT_SIZE_X >= elayerPosX
+				&& eShotPosX[e] <= playerPosX + PLAYER_SIZE_X
+				&& eShotPosY[e] + ESHOT_SIZE_Y >= playerPosY
+				&& eShotPosY[e] <= playerPosY + PLAYER_SIZE_Y)
 			{
-				EShotFlag[e] = false;
-				PlayerFlag = false;
-				PlayerFlag = true;
+				eShotFlag[e] = false;
+				playerFlag = false;
+				playerFlag = true;
 				PlayerDeathProc();
 
 				return true;
@@ -119,27 +139,9 @@ bool PlayerCheckHitEShot(void)
 // 自機の減算処理
 void PlayerDeathProc(void)
 {
-	PlayerLife--;
+	playerLife--;
 
-	if (PlayerLife > 0)
-	{
-		if (PlayerFlag == false)
-		{
-
-			for (int y = 0; y < ENEMY_Y; y++)
-			{
-				for (int x = 0; x < ENEMY_X; x++)
-				{
-					EnemyPosX[y][x] = ((ENEMY_SIZE_X * 10) / 7) * x;
-					EnemyPosY[y][x] = (ENEMY_SIZE_Y * 9 / 7) * y;
-					enemyType[y][x] = (ENEMY_TYPE)((y % (ENEMY_TYPE_MAX - 1)) + 1);
-				}
-			}
-			PlayerFlag = true;
-		}
-	}
-
-	if (PlayerLife <= 0)
+	if (playerLife <= 0)
 	{
 		systemScene = SCENE_GAMEOVER;		// 残機がない場合、ｹﾞｰﾑｵｰﾊﾞｰにする
 	}
@@ -148,30 +150,30 @@ void PlayerDeathProc(void)
 void PlayerGameDraw(void)
 {
 	//残機数を表示
-	DrawFormatString((GAME_SCREEN_X + GAME_SCREEN_SIZE_X) + 50, 300, 0xFFFFFF, "PLAYER = %d", PlayerLife);
+	DrawFormatString((GAME_SCREEN_X + GAME_SCREEN_SIZE_X) + 50, 300, 0xFFFFFF, "PLAYER = %d", playerLife);
 
 	//プレイヤーの位置表示
-	DrawFormatString(0, 0, 0xFFFFFF, "PLAYER = ( %d, %d)", PlayerPosX, PlayerPosY);
+	DrawFormatString(0, 0, 0xFFFFFF, "PLAYER = ( %d, %d)", playerPosX, playerPosY);
 
 	//プレイヤーの残機表示
-	for (int p = 0; p < PlayerLife; p++)
+	for (int p = 0; p < playerLife; p++)
 	{
-		DrawGraph((GAME_SIZE_X + 20) + 40 * (p % 3), (SCREEN_SIZE_Y - 80) - PLAYER_SIZE_Y * ((p / 3) + 1), PlayerImage[PLAYER_STYLE_FRONT][0], true);
+		DrawGraph((GAME_SIZE_X + 20) + 40 * (p % 3), (SCREEN_SIZE_Y - 80) - PLAYER_SIZE_Y * ((p / 3) + 1), playerImage[PLAYER_STYLE_FRONT][0], true);
 	}
 
 	//プレイヤーの表示
-	if (PlayerFlag == true)
+	if (playerFlag == true)
 	{
 		if (playerAniCnt % 60 <= 30)
 		{
 			for (int x = 0; x < PLAYER_ANI_MAX; x++)
 			{
-				DrawGraph(PlayerPosX + GAME_OFFSET_X, (GAME_SIZE_Y + GAME_OFFSET_Y) - PLAYER_SIZE_Y, PlayerImage[PLAYER_STYLE_BACK][0], true);
+				DrawGraph(playerPosX + GAME_OFFSET_X, (GAME_SIZE_Y + GAME_OFFSET_Y) - PLAYER_SIZE_Y, playerImage[PLAYER_STYLE_BACK][0], true);
 			}
 		}
 		else
 		{
-			DrawGraph(PlayerPosX + GAME_OFFSET_X, (GAME_SIZE_Y + GAME_OFFSET_Y) - PLAYER_SIZE_Y, PlayerImage[PLAYER_STYLE_BACK][1], true);
+			DrawGraph(playerPosX + GAME_OFFSET_X, (GAME_SIZE_Y + GAME_OFFSET_Y) - PLAYER_SIZE_Y, playerImage[PLAYER_STYLE_BACK][1], true);
 		}
 	}
 }
