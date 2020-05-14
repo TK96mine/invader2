@@ -23,32 +23,7 @@ enum SCENE
 	SCENE_MAX
 };
 
-//敵の左右の移動用
-enum MOVE_LR
-{
-	MOVE_LR_LEFT,
-	MOVE_LR_RIGHT,
-	MOVE_LR_MAX
-};
 
-//敵の上下の移動用
-enum MOVE_MODE
-{
-	MOVE_MODE_LR,
-	MOVE_MODE_DOWN,
-	MOVE_MODE_MAX
-};
-
-//敵の種類
-enum ENEMY_TYPE
-{
-	ENEMY_TYPE_NON,
-	ENEMY_TYPE_RED,
-	ENEMY_TYPE_BLUE,
-	ENEMY_TYPE_GREEN,
-	ENEMY_TYPE_ORANGE,
-	ENEMY_TYPE_MAX
-};
 
 #define SCREEN_SIZE_X 800	//画面の横ｻｲｽﾞ
 #define SCREEN_SIZE_Y 600	//画面の縦ｻｲｽﾞ
@@ -109,13 +84,16 @@ bool SystemInit(void);	//変数
 void InitScene(void);	//シーン
 
 //移動等の処理
-void shotControl(void);	//弾
+
 void EnemyControl(void);	//敵
 
 //シーン用
 void TitleScene(void);	//タイトル
 void Gamescene(void);	//ゲーム
-void CheckHitObj(void);	//当たり判定
+
+void HitObj(void);	//当たり判定
+
+
 void GameOverScene(void);	//ゲームオーバー
 void GameClear(void);	//ゲームクリア
 
@@ -124,9 +102,6 @@ void gameDraw(void);	//画像の描画
 
 //共通の画面レイアウト
 void gameDraw(void);	//画像の描画
-
-//プレイヤーのゲームオーバー用
-void PlayerDeathProc(void);
 
 /*
 //プレイヤーの死亡用
