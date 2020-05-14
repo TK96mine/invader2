@@ -36,5 +36,6 @@ enum ENEMY_TYPE
 //プロトタイプ宣言
 void EnemySystemInit(void);	//敵の画像ロード用
 void EnemyGameInit(void);	//敵の変数初期化用
+void EnemyControl(void);	//敵の移動等の処理用
 bool EnemyCheckHitObj(void);	//敵の当たり判定
 void EnemyGameDraw(void);	//敵のゲームシーンでの描画用
