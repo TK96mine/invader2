@@ -1,9 +1,47 @@
 #include"DxLib.h"
 #include"main.h"
 #include"shot.h"
+#include"score.h"
 
+//変数
+//プレイヤー
+int PShotImage;	//プレイヤーの弾の画像格納用
+int PShotPosX;	//プレイヤーの弾の横軸の位置
+int PShotPosY;	//プレイヤーの弾の縦軸の位置
+int PShotSpeed;	//プレイヤーの弾の移動速度
+bool PShotFlag;	//プレイヤーの弾の発射状態
 
+//敵
+int EShotImage;	//敵の弾の画像格納用
+int EShotPosX[ESHOT_MAX];	//敵の弾の横軸位置
+int EShotPosY[ESHOT_MAX];	//敵の弾の縦軸位置
+int EShotSpeed;	//敵の弾の速度
+bool EShotFlag[ESHOT_MAX];	//敵の弾の状態
 
+void ShotSystemInit(void)
+{
+	//プレイヤーの弾
+	PShotImage = LoadGraph("image/pshot.png");
+
+	//敵の弾
+	EShotImage = LoadGraph("image/eshot.png");
+}
+
+void ShotGameInit(void)
+{
+	PShotPosY = 0;
+	PShotPosX = 0;
+	PShotSpeed = (PSHOT_DEF_SPEED);
+	EShotSpeed = (ESHOT_DEF_SPEED);
+	for (int x = 0; x < ENEMY_X; x++)
+	{
+		EShotPosX[x] = 0;
+		EShotPosY[x] = 0;
+
+		EShotFlag[x] = false;
+	}
+	PShotFlag = false;
+}
 
 void PlayerShotControl(void)
 {
@@ -92,6 +130,24 @@ void EnemyShotControl(void)
 			{
 				EShotFlag[e] = false;	//敵の弾のフラグをfalseにする
 			}
+		}
+	}
+}
+
+void ShotGameDraw(void)
+{
+	//弾の表示
+	//ﾌﾟﾚｲﾔｰの弾の表示
+	if (PShotFlag == true)
+	{
+		DrawGraph(PShotPosX + GAME_OFFSET_X, PShotPosY + GAME_OFFSET_Y, PShotImage, true);
+	}
+	//敵の弾の表示
+	for (int e = 0; e < ESHOT_MAX; e++)
+	{
+		if (EShotFlag[e] == true)
+		{
+			DrawGraph(EShotPosX[e] + GAME_OFFSET_X, EShotPosY[e] + GAME_OFFSET_Y, EShotImage, true);
 		}
 	}
 }
