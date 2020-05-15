@@ -6,15 +6,13 @@
 
 //プレイヤー
 int playerbakuImage[BAKU_ANI];	//爆発画像格納用
-int playerbakuPosX;	//爆発画像の横軸位置
-int playerbakuPosY;	//爆発画像の縦軸位置
+XY playerbakuPos;	//爆発画像の位置
 int playerbakuAni;	//爆発のアニメーション用
 bool playerbakuFlag;	//爆発画像の状態
 
 //敵
 int enemybakuImage[BAKU_ANI];	//爆発画像格納用
-int enemybakuPosX;	//爆発画像の横軸位置
-int enemybakuPosY;	//爆発画像の縦軸位置
+XY enemybakuPos;	//爆発画像の位置
 int enemybakuAni;	//爆発のアニメーション用
 bool enemybakuFlag;	//爆発画像の状態
 
@@ -24,13 +22,18 @@ void BrastSystemInit(void)
 	LoadDivGraph("image/blast.png", 24, 6, 4, BAKU_SIZE_X, BAKU_SIZE_Y, enemybakuImage);
 }
 
-void BrastGameInit(void)
+void PlayerBrastGameInit(XY playerPos)
 {
 	//プレイヤー
-	playerbakuPosX = playerPosX;
-	playerbakuPosY = playerPosY;
+	playerbakuPos.x = playerPos.x;
+	playerbakuPos.y = playerPos.y;
 	playerbakuAni = 0;
 	playerbakuFlag = false;
+}
+
+void EnemyBrastGameInit(void)
+{
+
 }
 
 void BrastControl(void)
