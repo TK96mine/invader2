@@ -28,14 +28,14 @@ void PlayerGameInit(void);
 //プレイヤーの移動等の処理用
 void PlayerControl(void);	
 
-//プレイヤーと敵の当たり判定
-bool PlayerCheckHitEnemy(void);	
+//プレイヤーが敵に当たった時の処理
+void PlayerHitEnemy(void);
 
-//プレイヤーと敵の弾との当たり判定
-bool PlayerCheckHitEShot(void);	
+//プレイヤーが敵の弾に当たった時の処理
+void PlayerHitEShot(void);
 
 //プレイヤーのゲームオーバー用
-void PlayerDeathProc(void);	
+bool PlayerDeathProc(void);
 
 //ゲーム中のプレイヤーの描画用
 void PlayerGameDraw(void);	
