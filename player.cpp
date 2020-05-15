@@ -1,17 +1,13 @@
 #include"DxLib.h"
-
 #include"main.h"
-
 #include"player.h"
+#include"enemy.h"
+#include"shot.h"
+#include"brast.h"
 
 //変数
 int playerImage[PLAYER_STYLE_MAX][PLAYER_ANI_MAX];	//ﾌﾟﾚｲﾔｰの画像格納用
-int playerPosX;		//ﾌﾟﾚｲﾔｰのX座標
-int playerPosY;		//ﾌﾟﾚｲﾔｰのY座標
-int playerSpeed;	//ﾌﾟﾚｲﾔｰのｽﾋﾟｰﾄﾞ
-bool playerFlag;		//ﾌﾟﾚｲﾔｰのﾌﾗｸﾞ
-int playerLife;		//残機
-int playerAniCnt;	//プレイヤーのアニメーション用カウンター
+CHARACTER player;
 
 void PlayerSystemInit(void)
 {
@@ -21,159 +17,136 @@ void PlayerSystemInit(void)
 
 void PlayerGameInit(void)
 {
-	playerPosX = (GAME_SIZE_X - PLAYER_SIZE_X) / 2;
-	playerPosY = (GAME_SIZE_Y - PLAYER_SIZE_Y);
-	playerSpeed = (PLAYER_DEF_SPEED);
-	playerFlag = true;
-	playerLife = PLAYER_DEF_LIFE;
+	player.pos.x = (GAME_SIZE_X - PLAYER_SIZE_X) / 2;
+	player.pos.y = (GAME_SIZE_Y - PLAYER_SIZE_Y);
+	player.speed = (PLAYER_DEF_SPEED);
+	player.flag = true;
+	player.life = PLAYER_DEF_LIFE;
+
+	PlayerBrastGameInit(player.pos);
 }
 
 //プレイヤーの処理
 void PlayerControl(void)
 {
-	if (playerFlag == true)
+	player.aniCnt++;
+
+	if (player.flag == true)
 	{
 		//右移動
 		if (CheckHitKey(KEY_INPUT_NUMPAD6))
 		{
-			if (playerPosX >= GAME_SIZE_X - PLAYER_SIZE_X)	//移動制限
+			if (player.pos.x >= GAME_SIZE_X - PLAYER_SIZE_X)	//移動制限
 			{
-				playerPosX = GAME_SIZE_X - PLAYER_SIZE_X;
+				player.pos.x = GAME_SIZE_X - PLAYER_SIZE_X;
 			}
 			else
 			{
-				playerPosX += playerSpeed;
+				player.pos.x += player.speed;
 			}
 		}
 		//左移動
 		if (CheckHitKey(KEY_INPUT_NUMPAD4))
 		{
-			if (playerPosX - playerSpeed <= 0    /*GAME_OFFSET_X*/)
+			if (player.pos.x - player.speed <= 0    /*GAME_OFFSET_X*/)
 			{
-				playerPosX = 0;
+				player.pos.x = 0;
 			}
 			else
 			{
-				playerPosX -= playerSpeed;
+				player.pos.x -= player.speed;
 			}
 		}
 	}
+
+	//弾の発射
+	PlayerShotControl(player.pos);
+
 }
 
-bool PlayerCheckHitEnemy(void)
+void PlayerHitEnemy(void)
 {
-	for (int y = 0; y < ENEMY_Y; y++)
+	if (PlayerCheckHitEShot(player.pos, player.flag) == true)
 	{
-		for (int x = 0; x < ENEMY_X; x++)
+		player.flag = false;
+		PlayerDeathProc();
+
+		if (player.life > 0)
 		{
-			//敵と自機との当たり判定
-			if (enemyFlag[y][x] == true && playerFlag == true)
+			if (player.flag == false)
 			{
-				if (enemyPosX[y][x] + ENEMY_SIZE_X >= playerPosX
-					&& enemyPosX[y][x] <= playerPosX + PLAYER_SIZE_X
-					&& enemyPosY[y][x] + ENEMY_SIZE_Y >= playerPosY
-					&& enemyPosY[y][x] <= playerPosY + PLAYER_SIZE_Y)
-				{
-					playerFlag = false;
-					PlayerDeathProc();
-
-					if (playerLife > 0)
-					{
-						if (playerFlag == false)
-						{
-
-							for (int y = 0; y < ENEMY_Y; y++)
-							{
-								for (int x = 0; x < ENEMY_X; x++)
-								{
-									enemyPosX[y][x] = ((ENEMY_SIZE_X * 10) / 7) * x;
-									enemyPosY[y][x] = (ENEMY_SIZE_Y * 9 / 7) * y;
-									enemyType[y][x] = (ENEMY_TYPE)((y % (ENEMY_TYPE_MAX - 1)) + 1);
-								}
-							}
-							playerFlag = true;
-						}
-					}
-
-					return true;
-
-					/*else if (PlayerLife == 0)
-					{
-						systemScene = SCENE_GAMEOVER;
-					}*/
-				}
+				player.flag = true;
 			}
 		}
 	}
 
-	return false;
+	if (PlayerCheckHitEnemy(player.pos,player.flag) == true)
+	{
+		player.flag = false;
+		PlayerDeathProc();
+
+		if (player.life > 0)
+		{
+			if (player.flag == false)
+			{
+				ResetEnemyPos();
+				player.flag = true;
+			}
+		}
+	}
 }
 
-//プレイヤーと敵の弾の当たり判定
-bool PlayerCheckHitEShot(void)
+void PlayerHitEShot(void)
 {
-	//敵の弾と自機との当たり判定
-	for (int e = 0; e < ESHOT_MAX; e++)
+	if (PlayerCheckHitEShot(player.pos,player.flag) == true)
 	{
-		if (eShotFlag[e] == true && playerFlag == true)
-		{
-
-			if (eShotPosX[e] + ESHOT_SIZE_X >= elayerPosX
-				&& eShotPosX[e] <= playerPosX + PLAYER_SIZE_X
-				&& eShotPosY[e] + ESHOT_SIZE_Y >= playerPosY
-				&& eShotPosY[e] <= playerPosY + PLAYER_SIZE_Y)
-			{
-				eShotFlag[e] = false;
-				playerFlag = false;
-				playerFlag = true;
-				PlayerDeathProc();
-
-				return true;
-			}
-		}
+		player.flag = false;
+		player.flag = true;
+		PlayerDeathProc();
 	}
-
-	return false;
 }
+
 
 // 自機の減算処理
-void PlayerDeathProc(void)
+bool PlayerDeathProc(void)
 {
-	playerLife--;
+	player.life--;
 
-	if (playerLife <= 0)
+	if (player.life <= 0)
 	{
-		systemScene = SCENE_GAMEOVER;		// 残機がない場合、ｹﾞｰﾑｵｰﾊﾞｰにする
+		return true;
 	}
+
+	return false;
 }
 
 void PlayerGameDraw(void)
 {
 	//残機数を表示
-	DrawFormatString((GAME_SCREEN_X + GAME_SCREEN_SIZE_X) + 50, 300, 0xFFFFFF, "PLAYER = %d", playerLife);
+	DrawFormatString((GAME_SCREEN_X + GAME_SCREEN_SIZE_X) + 50, 300, 0xFFFFFF, "PLAYER = %d", player.life);
 
 	//プレイヤーの位置表示
-	DrawFormatString(0, 0, 0xFFFFFF, "PLAYER = ( %d, %d)", playerPosX, playerPosY);
+	DrawFormatString(0, 0, 0xFFFFFF, "PLAYER = ( %d, %d)", player.pos.x, player.pos.y);
 
 	//プレイヤーの残機表示
-	for (int p = 0; p < playerLife; p++)
+	for (int p = 0; p < player.life; p++)
 	{
 		DrawGraph((GAME_SIZE_X + 20) + 40 * (p % 3), (SCREEN_SIZE_Y - 80) - PLAYER_SIZE_Y * ((p / 3) + 1), playerImage[PLAYER_STYLE_FRONT][0], true);
 	}
 
 	//プレイヤーの表示
-	if (playerFlag == true)
+	if (player.flag == true)
 	{
-		if (playerAniCnt % 60 <= 30)
+		if (player.aniCnt % 60 <= 30)
 		{
 			for (int x = 0; x < PLAYER_ANI_MAX; x++)
 			{
-				DrawGraph(playerPosX + GAME_OFFSET_X, (GAME_SIZE_Y + GAME_OFFSET_Y) - PLAYER_SIZE_Y, playerImage[PLAYER_STYLE_BACK][0], true);
+				DrawGraph(player.pos.x + GAME_OFFSET_X, (GAME_SIZE_Y + GAME_OFFSET_Y) - PLAYER_SIZE_Y, playerImage[PLAYER_STYLE_BACK][0], true);
 			}
 		}
 		else
 		{
-			DrawGraph(playerPosX + GAME_OFFSET_X, (GAME_SIZE_Y + GAME_OFFSET_Y) - PLAYER_SIZE_Y, playerImage[PLAYER_STYLE_BACK][1], true);
+			DrawGraph(player.pos.x + GAME_OFFSET_X, (GAME_SIZE_Y + GAME_OFFSET_Y) - PLAYER_SIZE_Y, playerImage[PLAYER_STYLE_BACK][1], true);
 		}
 	}
 }
