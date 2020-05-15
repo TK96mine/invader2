@@ -82,9 +82,17 @@ struct XY
 	int y;
 };
 
+struct CHARACTER
+{
+	XY pos;	//位置情報格納用
+	int speed;	//移動量格納用
+	bool flag;	//生存確認用
+	int life;	//残り機体数
+	int aniCnt;	//アニメーション用カウンター
+	int type;	//種類
+};
 
 //プロトタイプ宣言
-
 //初期化
 bool SystemInit(void);	//変数
 void InitScene(void);	//シーン
@@ -94,9 +102,6 @@ void TitleScene(void);	//タイトル
 void Gamescene(void);	//ゲーム
 void GameOverScene(void);	//ゲームオーバー
 void GameClear(void);	//ゲームクリア
-
-//当たり判定
-void HitObj(void);	//当たり判定
 
 //画像の描画用
 void gameDraw(void);	//画像の描画
