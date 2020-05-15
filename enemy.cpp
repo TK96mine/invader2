@@ -1,20 +1,22 @@
 #include"DxLib.h"
 #include"main.h"
+#include"player.h"
 #include"enemy.h"
+#include"shot.h"
 #include"score.h"
 
 //変数
 int enemyImage[ENEMY_TYPE_MAX][ENEMY_ANI_MAX];	//敵の画像格納用
-int enemyPosX[ENEMY_Y][ENEMY_X];	//敵の横軸のポジション
-int enemyPosY[ENEMY_Y][ENEMY_X];	//敵の縦軸のポジション
-int enemySpeed;	//敵の移動速度
-bool enemyFlag[ENEMY_Y][ENEMY_X];	//敵の生存確認用変数
+CHARACTER enemy[ENEMY_Y][ENEMY_X];	//敵のポジション
 MOVE_MODE enemyMoveMode;	//敵の移動モード
 MOVE_LR enemyMoveX;	//敵の横軸移動
 ENEMY_TYPE enemyType[ENEMY_Y][ENEMY_X];	//敵の種類
 int enemyCount;	//敵の数
 int enemyAddSpeed;	//敵機の移動速度に加える速度
 int enemyMoveCnt;	//敵の移動用カウンター
+int estringCnt;	//敵用表示文字の点滅用カウンター
+int estringFlag;	//敵が半数切った際に文字表示するためのフラグ
+
 
 void EnemySystemInit(void)
 {
@@ -27,17 +29,16 @@ void EnemyGameInit(void)
 	{
 		for (int x = 0; x < ENEMY_X; x++)
 		{
-			enemyPosX[y][x] = ((ENEMY_SIZE_X * 10) / 7) * x;
-			enemyPosY[y][x] = (ENEMY_SIZE_Y * 9 / 7) * y;
+			enemy[y][x].pos.x = ((ENEMY_SIZE_X * 10) / 7) * x;
+			enemy[y][x].pos.y = (ENEMY_SIZE_Y * 9 / 7) * y;
 			enemyType[y][x] = (ENEMY_TYPE)((y % (ENEMY_TYPE_MAX - 1)) + 1);
-			enemyFlag[y][x] = true;
+			enemy[y][x].flag = true;
+			enemy[y][x].speed = ENEMY_DEF_SPEED;
 		}
 	}
-
-	enemyFlag[2][3] = false;
-	enemySpeed = ENEMY_DEF_SPEED;
+	enemy[2][3].flag = false;
 	enemyAddSpeed = 5;
-	enemyMoveMode == MOVE_MODE_LR;
+	enemyMoveMode = MOVE_MODE_LR;
 	enemyMoveX = MOVE_LR_RIGHT;
 	enemyCount = ENEMY_MAX;
 	enemyMoveCnt = 0;
@@ -52,6 +53,8 @@ void EnemyControl(void)
 	enemyPosXMin = GAME_SIZE_X;
 	enemyPosXMax = 0;
 
+	enemyMoveCnt++;
+
 	if (enemyCount < ENEMY_MAX / 2)
 	{
 		if (enemyMoveCnt % 30 == 0 || enemyMoveCnt % 30 == 15)
@@ -61,7 +64,7 @@ void EnemyControl(void)
 			{
 				for (int x = 0; x < ENEMY_X; x++)
 				{
-					if (enemyFlag[y][x])
+					if (enemy[y][x].flag)
 					{
 						//-----敵の移動処理
 						//横移動
@@ -69,18 +72,18 @@ void EnemyControl(void)
 						{
 							if (enemyMoveX == MOVE_LR_RIGHT)
 							{
-								enemyPosX[y][x] += (enemySpeed + enemyAddSpeed);
+								enemy[y][x].pos.x += (enemy[y][x].speed + enemyAddSpeed);
 							}
 							else if (enemyMoveX == MOVE_LR_LEFT)
 							{
-								enemyPosX[y][x] -= (enemySpeed + enemyAddSpeed);
+								enemy[y][x].pos.x -= (enemy[y][x].speed + enemyAddSpeed);
 							}
 						}
 
 						//縦移動
 						if (enemyMoveMode == MOVE_MODE_DOWN)
 						{
-							enemyPosY[y][x] += ENEMY_SIZE_Y;
+							enemy[y][x].pos.y += ENEMY_SIZE_Y;
 						}
 
 					}
@@ -97,7 +100,7 @@ void EnemyControl(void)
 			{
 				for (int x = 0; x < ENEMY_X; x++)
 				{
-					if (enemyFlag[y][x])
+					if (enemy[y][x].flag)
 					{
 						//-----敵の移動処理
 						//横移動
@@ -105,18 +108,18 @@ void EnemyControl(void)
 						{
 							if (enemyMoveX == MOVE_LR_RIGHT)
 							{
-								enemyPosX[y][x] += enemySpeed;
+								enemy[y][x].pos.x += enemy[y][x].speed;
 							}
 							else if (enemyMoveX == MOVE_LR_LEFT)
 							{
-								enemyPosX[y][x] -= enemySpeed;
+								enemy[y][x].pos.x -= enemy[y][x].speed;
 							}
 						}
 
 						//縦移動
 						if (enemyMoveMode == MOVE_MODE_DOWN)
 						{
-							enemyPosY[y][x] += ENEMY_SIZE_Y;
+							enemy[y][x].pos.y += ENEMY_SIZE_Y;
 						}
 
 					}
@@ -130,17 +133,17 @@ void EnemyControl(void)
 	{
 		for (int x = 0; x < ENEMY_X; x++)
 		{
-			if (enemyFlag[y][x])
+			if (enemy[y][x].flag)
 			{
 				//-----敵の移動制限
-				if (enemyPosXMin > enemyPosX[y][x])
+				if (enemyPosXMin > enemy[y][x].pos.x)
 				{
-					enemyPosXMin = enemyPosX[y][x];
+					enemyPosXMin = enemy[y][x].pos.x;
 				}
 
-				if (enemyPosXMax < enemyPosX[y][x])
+				if (enemyPosXMax < enemy[y][x].pos.x)
 				{
-					enemyPosXMax = enemyPosX[y][x];
+					enemyPosXMax = enemy[y][x].pos.x;
 				}
 			}
 		}
@@ -165,40 +168,79 @@ void EnemyControl(void)
 			enemyMoveX = MOVE_LR_RIGHT;
 		}
 	}
+
+	//弾の発射
+	for (int x = 0; x < ENEMY_X; x++)
+	{
+		for (int y = ENEMY_Y - 1; y >= 0; y--)	//1番プレイヤーに近い(1番下の)生存している敵を除いた敵(敵の縦軸の数 - 1)を下から数えていく
+		{
+			EnemyShotControl(enemy[y][x].pos,enemy[y][x].flag,enemyCount);
+		}
+	}
 }
 
-//自機の弾と敵の当たり判定
-bool EnemyCheckHitObj(void)
+bool PlayerCheckHitEnemy(XY playerPos,bool playerFlag)
 {
 	for (int y = 0; y < ENEMY_Y; y++)
 	{
 		for (int x = 0; x < ENEMY_X; x++)
 		{
-			//自機の弾と敵の当たり判定
-			if (PShotFlag == true)
+			//敵と自機との当たり判定
+			if (enemy[y][x].flag == true && playerFlag == true)
 			{
-				if (enemyPosX[y][x] + ENEMY_SIZE_X >= PShotPosX
-					&& enemyPosX[y][x] <= PShotPosX + PSHOT_SIZE_X
-					&& enemyPosY[y][x] + ENEMY_SIZE_Y >= PShotPosY
-					&& enemyPosY[y][x] <= PShotPosY + PSHOT_SIZE_Y
-					&& enemyFlag[y][x] == true)
+				if (enemy[y][x].pos.x + ENEMY_SIZE_X >= playerPos.x
+					&& enemy[y][x].pos.x <= playerPos.x + PLAYER_SIZE_X
+					&& enemy[y][x].pos.y + ENEMY_SIZE_Y >= playerPos.y
+					&& enemy[y][x].pos.y <= playerPos.y + PLAYER_SIZE_Y)
 				{
-					enemyFlag[y][x] = false;
-					PShotFlag = false;
-					AddScore(100);
-					enemyCount--;
 					return true;
 
-					if (enemyCount == 0 && PlayerLife > 0)
+					/*else if (PlayerLife == 0)
 					{
-						SystemScene = SCENE_CLEAR;
-					}
+						systemScene = SCENE_GAMEOVER;
+					}*/
 				}
 			}
 		}
 	}
 
 	return false;
+}
+
+void EnemyHitObj(void)
+{
+	for (int y = 0; y < ENEMY_Y; y++)
+	{
+		for (int x = 0; x < ENEMY_X; x++)
+		{
+			if (EnemyCheckHitObj(enemy[y][x].pos,enemy[y][x].flag) == true)
+			{
+				enemy[y][x].flag = false;
+				AddScore(100);
+				enemyCount--;
+
+				/*
+				if (enemyCount == 0 && player.life > 0)
+				{
+					systemScene = SCENE_CLEAR;
+				}
+				*/
+			}
+		}
+	}
+}
+
+void ResetEnemyPos(void)
+{
+	for (int y = 0; y < ENEMY_Y; y++)
+	{
+		for (int x = 0; x < ENEMY_X; x++)
+		{
+			enemy[y][x].pos.x = ((ENEMY_SIZE_X * 10) / 7) * x;
+			enemy[y][x].pos.y = (ENEMY_SIZE_Y * 9 / 7) * y;
+			enemy[y][x].type = (ENEMY_TYPE)((y % (ENEMY_TYPE_MAX - 1)) + 1);
+		}
+	}
 }
 
 void EnemyGameDraw(void)
@@ -208,9 +250,9 @@ void EnemyGameDraw(void)
 	{
 		for (int x = 0; x < ENEMY_X; x++)
 		{
-			if (enemyFlag[y][x] == true)
+			if (enemy[y][x].flag == true)
 			{
-				DrawGraph(enemyPosX[y][x] + GAME_OFFSET_X, enemyPosY[y][x] + GAME_OFFSET_Y, enemyImage[enemyType[y][x]][0], true);
+				DrawGraph(enemy[y][x].pos.x + GAME_OFFSET_X, enemy[y][x].pos.y + GAME_OFFSET_Y, enemyImage[enemyType[y][x]][0], true);
 			}
 		}
 	}
@@ -218,20 +260,20 @@ void EnemyGameDraw(void)
 	//敵機が半数を切った時の表示
 	if (enemyCount < ENEMY_MAX / 2)
 	{
-		stringCnt += 1;
+		estringCnt ++;
 
-		if (stringCnt > 120)
+		if (estringCnt > 120)
 		{
-			stringFlag = false;
+			estringFlag = false;
 		}
 		else
 		{
-			stringFlag = true;
+			estringFlag = true;
 		}
 
-		if (stringFlag == true)
+		if (estringFlag == true)
 		{
-			if (stringCnt != 0 && (stringCnt / 20) % 2 == 0)
+			if (estringCnt != 0 && (estringCnt / 20) % 2 == 0)
 			{
 				DrawString((SCREEN_SIZE_X / 2) - 120, (SCREEN_SIZE_Y / 2) - 20, "W  A  R  N  I  N  G", 0xFF0000);
 			}
