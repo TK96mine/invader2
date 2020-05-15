@@ -11,10 +11,8 @@ int gameCounter;	//ゲーム用カウンター
 int titleImage;		//ﾀｲﾄﾙの画像格納用
 int gameoverImage; //ｹﾞｰﾑオーバのｲﾒｰｼﾞ格納用
 bool gameScene;	//ゲームシーンの状態(?)
-int titlePosX;	//タイトル画像の横軸の位置
-int titlePosY;	//タイトル画像の縦軸の位置
-int gameoverPosX;	//ゲームオーバー画像の横軸の位置
-int gameoverPosY;	//ゲームオーバー画像の縦軸の位置
+XY titlePos;	//タイトル画像の位置
+XY gameoverPos;	//ゲームオーバー画像の位置
 int systemScene;	//シーンの状態格納用
 
 //キーバッファ
@@ -27,8 +25,7 @@ int stringCnt;	//文字表示の点滅用カウンター
 
 //ゲームクリア用
 int clearImage;	//ゲームクリアの画像格納用
-int crearPosX;		//ゲームクリア画像の横軸位置
-int clearPosY;		//ゲームクリア画像の縦軸位置
+XY crearPos;		//ゲームクリア画像位置
 
 //背景用
 int bgImage;
@@ -36,7 +33,6 @@ int gameoverBgImage;
 
 //文字表示用
 bool stringFlag;
-
 
 //winmain
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
@@ -66,14 +62,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		}
 
 		massageCnt++;
-		if (massageCnt > 99999)
-		{
-			massageCnt = 0;
-		}
-
-		enemyMoveCnt++;
-
-		playerAniCnt++;
 
 		switch (systemScene)
 		{
@@ -153,10 +141,10 @@ void InitScene(void)
 	//弾
 	ShotGameInit();
 
-	titlePosX = 40;
-	titlePosY = 40;
-	gameoverPosX = 50;
-	gameoverPosY = 50;
+	titlePos.x = 40;
+	titlePos.y = 40;
+	gameoverPos.x = 50;
+	gameoverPos.y = 50;
 	gameScene = true;
 
 	//カウント用
@@ -195,30 +183,20 @@ void TitleScene(void)
 	DrawTexts();
 }
 
-
-
-//当たり判定
-void HitObj(void)
-{
-	if (PlayerCheckHitEnemy() == true || PlayerCheckHitEShot() == true)
-	{
-		PlayerDeathProc();
-	}
-}
-
-
-
 void Gamescene(void)
 {
 	//プレイヤー
 	PlayerControl();
+	PlayerHitEnemy();
+	PlayerHitEShot();
 
 	//敵
 	EnemyControl();
 
-	//弾
-	PlayerShotControl();
-	EnemyShotControl();
+	if (PlayerDeathProc() == true)
+	{
+		systemScene = SCENE_GAMEOVER;		// 残機がない場合、ｹﾞｰﾑｵｰﾊﾞｰにする
+	}
 
 	gameDraw();
 }
