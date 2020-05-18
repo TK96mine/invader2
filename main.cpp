@@ -115,8 +115,8 @@ bool SystemInit(void)
 	// ｸﾞﾗﾌｨｯｸの登録
 	PlayerSystemInit();
 	EnemySystemInit();
-	BrastSystemInit();
 	ShotSystemInit();
+	BrastSystemInit();
 
 	//背景
 	bgImage = LoadGraph("image/bgimage.jpg");
@@ -192,6 +192,12 @@ void Gamescene(void)
 
 	//敵
 	EnemyControl();
+	EnemyHitObj();
+
+	if (PlayerClearCheck() == true)
+	{
+		systemScene = SCENE_CLEAR;
+	}
 
 	if (PlayerDeathProc() == true)
 	{
@@ -253,20 +259,19 @@ void gameDraw(void)
 {
 	DrawGraph(GAME_OFFSET_X, GAME_OFFSET_Y, bgImage, true);
 
+	//ゲームカウントの表示
+	DrawFormatString(GAME_OFFSET_X + 20, GAME_OFFSET_Y + 16, 0xFFFFFF, "GAME COUNT = %d", gameCounter);
+
 	ShotGameDraw();
 	PlayerGameDraw();
 	EnemyGameDraw();
-
-	//ゲームカウントの表示
-	DrawFormatString(GAME_OFFSET_X + 20, GAME_OFFSET_Y + 16, 0xFFFFFF, "GAME COUNT = %d", gameCounter);
+	DrawTexts();
 
 	/*
 	//スペースキーの状態
 	DrawFormatString(0, 16, GetColor(0, 220, 250), "SPACE NEW = %d", spaceKeyNew);
 	DrawFormatString(0, 32, GetColor(0, 220, 250), "SPACE OLD = %d",spaceKeyOld);
 	*/
-
-	DrawTexts();
 }
 
 
