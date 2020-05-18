@@ -26,16 +26,16 @@ void ShotGameInit(void)
 {
 	pShot.pos.y = 0;
 	pShot.pos.x = 0;
-	pShot.speed = (PSHOT_DEF_SPEED);
-
-	for (int x = 0; x < ENEMY_X; x++)
-	{
-		eShot[x].pos.x = 0;
-		eShot[x].pos.y = 0;
-		eShot[x].speed = (ESHOT_DEF_SPEED);
-		eShot[x].flag = false;
-	}
+	pShot.speed = PSHOT_DEF_SPEED;
 	pShot.flag = false;
+
+	for (int e = 0; e < ESHOT_MAX; e++)
+	{
+		eShot[e].pos.x = 0;
+		eShot[e].pos.y = 0;
+		eShot[e].speed = ESHOT_DEF_SPEED;
+		eShot[e].flag = false;
+	}
 }
 
 void PlayerShotControl(XY playerPos)
@@ -62,50 +62,45 @@ void PlayerShotControl(XY playerPos)
 	}
 }
 
-void EnemyShotControl(XY enemyPos, bool enemyFlag, int enemyCount)
+void EnemyShotControl(XY enemyPos, int enemyCount)
 {
 	//“G‚Ì’e‚Ì‘€ì
-	if (enemyFlag == true)
+	//“G‹@‚ª”¼•ª‚ðØ‚Á‚½ŽžA”­ŽË’i”‚ð‘‚â‚·
+	if (enemyCount < ENEMY_MAX / 2)
 	{
-		//“G‹@‚ª”¼•ª‚ðØ‚Á‚½ŽžA”­ŽË’i”‚ð‘‚â‚·
-		if (enemyCount < ENEMY_MAX / 2)
+		if (GetRand(30) == 1)	//0‚©‚ç30‚Ü‚Å‚Ì”’l‚ð—”‚Å•Ô‚µ‚Ä‚»‚Ì’l‚ª1‚ÌŽž‚Éˆ—‚·‚é
 		{
-			if (GetRand(30) == 1)	//0‚©‚ç30‚Ü‚Å‚Ì”’l‚ð—”‚Å•Ô‚µ‚Ä‚»‚Ì’l‚ª1‚ÌŽž‚Éˆ—‚·‚é
+			//“G‚Ì’e‚Ì”­ŽË
+			for (int e = 0; e < ESHOT_MAX; e++)
 			{
-				//“G‚Ì’e‚Ì”­ŽË
-				for (int e = 0; e < ESHOT_MAX; e++)
+				if (eShot[e].flag == false)
 				{
-					if (eShot[e].flag == false)
-					{
-						//‚»‚Ì—ñ‚Å1”Ô‰º‚Ì¶‘¶‚µ‚Ä‚¢‚é“G‚ðŒ©‚Â‚¯‚½ê‡‚Ìˆ—
-						eShot[e].pos.x = enemyPos.x + (ENEMY_SIZE_X - ESHOT_SIZE_X) / 2;
-						eShot[e].pos.y = enemyPos.y;
-						eShot[e].flag = true;
-						break;
-					}
+					//‚»‚Ì—ñ‚Å1”Ô‰º‚Ì¶‘¶‚µ‚Ä‚¢‚é“G‚ðŒ©‚Â‚¯‚½ê‡‚Ìˆ—
+					eShot[e].pos.x = enemyPos.x + (ENEMY_SIZE_X - ESHOT_SIZE_X) / 2;
+					eShot[e].pos.y = enemyPos.y;
+					eShot[e].flag = true;
+					break;
 				}
 			}
 		}
-		else
+	}
+	else
+	{
+		if (GetRand(500) == 1)	//0‚©‚ç500‚Ü‚Å‚Ì”’l‚ð—”‚Å•Ô‚µ‚Ä‚»‚Ì’l‚ª1‚ÌŽž‚Éˆ—‚·‚é
 		{
-			if (GetRand(500) == 1)	//0‚©‚ç500‚Ü‚Å‚Ì”’l‚ð—”‚Å•Ô‚µ‚Ä‚»‚Ì’l‚ª1‚ÌŽž‚Éˆ—‚·‚é
+			//“G‚Ì’e‚Ì”­ŽË
+			for (int e = 0; e < ESHOT_MAX; e++)
 			{
-				//“G‚Ì’e‚Ì”­ŽË
-				for (int e = 0; e < ESHOT_MAX; e++)
+				if (eShot[e].flag == false)
 				{
-					if (eShot[e].flag == false)
-					{
-						//‚»‚Ì—ñ‚Å1”Ô‰º‚Ì¶‘¶‚µ‚Ä‚¢‚é“G‚ðŒ©‚Â‚¯‚½ê‡‚Ìˆ—
-						eShot[e].pos.x = enemyPos.x + (ENEMY_SIZE_X - ESHOT_SIZE_X) / 2;
-						eShot[e].pos.y = enemyPos.y;
-						eShot[e].flag = true;
-						break;
-					}
+					//‚»‚Ì—ñ‚Å1”Ô‰º‚Ì¶‘¶‚µ‚Ä‚¢‚é“G‚ðŒ©‚Â‚¯‚½ê‡‚Ìˆ—
+					eShot[e].pos.x = enemyPos.x + (ENEMY_SIZE_X - ESHOT_SIZE_X) / 2;
+					eShot[e].pos.y = enemyPos.y;
+					eShot[e].flag = true;
+					break;
 				}
 			}
 		}
-
-		//break;
 	}
 
 	//“G‚Ì’e‚Ì§Œä
