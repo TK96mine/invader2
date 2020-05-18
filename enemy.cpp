@@ -55,6 +55,7 @@ void EnemyControl(void)
 
 	enemyMoveCnt++;
 
+	//“G‚ª”¼”‚ğØ‚Á‚½AˆÚ“®•p“x‚ğã‚°‚é
 	if (enemyCount < ENEMY_MAX / 2)
 	{
 		if (enemyMoveCnt % 30 == 0 || enemyMoveCnt % 30 == 15)
@@ -174,7 +175,11 @@ void EnemyControl(void)
 	{
 		for (int y = ENEMY_Y - 1; y >= 0; y--)	//1”ÔƒvƒŒƒCƒ„[‚É‹ß‚¢(1”Ô‰º‚Ì)¶‘¶‚µ‚Ä‚¢‚é“G‚ğœ‚¢‚½“G(“G‚Ìc²‚Ì” - 1)‚ğ‰º‚©‚ç”‚¦‚Ä‚¢‚­
 		{
-			EnemyShotControl(enemy[y][x].pos,enemy[y][x].flag,enemyCount);
+			if (enemy[y][x].flag == true)
+			{
+				EnemyShotControl(enemy[y][x].pos, enemyCount);
+				break;
+			}
 		}
 	}
 }
@@ -241,6 +246,16 @@ void ResetEnemyPos(void)
 			enemy[y][x].type = (ENEMY_TYPE)((y % (ENEMY_TYPE_MAX - 1)) + 1);
 		}
 	}
+}
+
+bool PlayerClearCheck(void)
+{
+	if (enemyCount == 0)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 void EnemyGameDraw(void)
