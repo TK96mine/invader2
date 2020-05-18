@@ -68,6 +68,7 @@ void PlayerHitEnemy(void)
 {
 	if (PlayerCheckHitEShot(player.pos, player.flag) == true)
 	{
+		player.life--;
 		player.flag = false;
 		PlayerDeathProc();
 
@@ -82,6 +83,7 @@ void PlayerHitEnemy(void)
 
 	if (PlayerCheckHitEnemy(player.pos,player.flag) == true)
 	{
+		player.life--;
 		player.flag = false;
 		PlayerDeathProc();
 
@@ -107,11 +109,9 @@ void PlayerHitEShot(void)
 }
 
 
-// 自機の減算処理
+// 自機の生存確認用関数
 bool PlayerDeathProc(void)
 {
-	player.life--;
-
 	if (player.life <= 0)
 	{
 		return true;
