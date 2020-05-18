@@ -38,6 +38,7 @@ void EnemySystemInit(void);	//敵の画像ロード用
 void EnemyGameInit(void);	//敵の変数初期化用
 void EnemyControl(void);	//敵の移動等の処理用
 bool PlayerCheckHitEnemy(XY playerPos, bool playerFlag);	//プレイヤーと敵の当たり判定
-void EnemyHitObj(void);
+void EnemyHitObj(void);		//敵と自機の弾が当たった時の処理
 void ResetEnemyPos(void);	//プレイヤーと敵が当たった際に敵の位置を初期化する
+bool PlayerClearCheck(void);	//プレイヤーがクリアしたか判定するための関数
 void EnemyGameDraw(void);	//敵のゲームシーンでの描画用
