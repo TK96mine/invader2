@@ -62,43 +62,43 @@ void PlayerShotControl(XY playerPos)
 	}
 }
 
+void EnemySetShot(XY enemyPos, int enemyCount)
+{
+	//“G‚Ì’e‚Ì”­ŽË
+	for (int e = 0; e < ESHOT_MAX; e++)
+	{
+		if (eShot[e].flag == false)
+		{
+			//‚»‚Ì—ñ‚Å1”Ô‰º‚Ì¶‘¶‚µ‚Ä‚¢‚é“G‚ðŒ©‚Â‚¯‚½ê‡‚Ìˆ—
+			eShot[e].pos.x = enemyPos.x + (ENEMY_SIZE_X - ESHOT_SIZE_X) / 2;
+			eShot[e].pos.y = enemyPos.y;
+			eShot[e].flag = true;
+			break;
+		}
+	}
+}
+
 void EnemyShotControl(XY enemyPos, int enemyCount)
 {
+	int rand = GetRand(100);	//0`100‚Ü‚Å‚Ì—”‚ðŠm•Û‚µA‚»‚ê‚ð•Ï”‚ÉŠi”[
+
 	//“G‚Ì’e‚Ì‘€ì
 	//“G‹@‚ª”¼•ª‚ðØ‚Á‚½ŽžA”­ŽË’i”‚ð‘‚â‚·
 	if (enemyCount < ENEMY_MAX / 2)
 	{
-		if (GetRand(30) == 1)	//0‚©‚ç30‚Ü‚Å‚Ì”’l‚ð—”‚Å•Ô‚µ‚Ä‚»‚Ì’l‚ª1‚ÌŽž‚Éˆ—‚·‚é
+		if (rand <= 5)	
 		{
-			//“G‚Ì’e‚Ì”­ŽË
-			for (int e = 0; e < ESHOT_MAX; e++)
-			{
-				if (eShot[e].flag == false)
-				{
-					//‚»‚Ì—ñ‚Å1”Ô‰º‚Ì¶‘¶‚µ‚Ä‚¢‚é“G‚ðŒ©‚Â‚¯‚½ê‡‚Ìˆ—
-					eShot[e].pos.x = enemyPos.x + (ENEMY_SIZE_X - ESHOT_SIZE_X) / 2;
-					eShot[e].pos.y = enemyPos.y;
-					eShot[e].flag = true;
-					break;
-				}
-			}
+			EnemySetShot(enemyPos,enemyCount);
 		}
 	}
 	else
 	{
-		if (GetRand(500) == 1)	//0‚©‚ç500‚Ü‚Å‚Ì”’l‚ð—”‚Å•Ô‚µ‚Ä‚»‚Ì’l‚ª1‚ÌŽž‚Éˆ—‚·‚é
+		if (rand == 1)
 		{
 			//“G‚Ì’e‚Ì”­ŽË
 			for (int e = 0; e < ESHOT_MAX; e++)
 			{
-				if (eShot[e].flag == false)
-				{
-					//‚»‚Ì—ñ‚Å1”Ô‰º‚Ì¶‘¶‚µ‚Ä‚¢‚é“G‚ðŒ©‚Â‚¯‚½ê‡‚Ìˆ—
-					eShot[e].pos.x = enemyPos.x + (ENEMY_SIZE_X - ESHOT_SIZE_X) / 2;
-					eShot[e].pos.y = enemyPos.y;
-					eShot[e].flag = true;
-					break;
-				}
+				EnemySetShot(enemyPos, enemyCount);
 			}
 		}
 	}
@@ -108,7 +108,7 @@ void EnemyShotControl(XY enemyPos, int enemyCount)
 	{
 		if (eShot[e].flag == true)
 		{
-			eShot[e].pos.y += eShot[e].speed;		//“G‚Ì’e‚ÌˆÚ“®
+			eShot[e].pos.y +=  eShot[e].speed;		//“G‚Ì’e‚ÌˆÚ“®
 
 			if (eShot[e].pos.y > GAME_SIZE_Y)		//“G‚Ì’e‚ªƒQ[ƒ€‰æ–ÊŠO‚Éo‚½‚Æ‚«ˆ—‚·‚é
 			{
@@ -126,7 +126,6 @@ bool PlayerCheckHitEShot(XY playerPos,bool playerFlag)
 	{
 		if (eShot[e].flag == true && playerFlag == true)
 		{
-
 			if (eShot[e].pos.x + ESHOT_SIZE_X >= playerPos.x
 				&& eShot[e].pos.x <= playerPos.x + PLAYER_SIZE_X
 				&& eShot[e].pos.y + ESHOT_SIZE_Y >= playerPos.y
