@@ -8,6 +8,7 @@
 void ShotSystemInit(void);	//弾の画像ロード用
 void ShotGameInit(void);	//弾の変数の初期化用
 void PlayerShotControl(XY playerPos);	//プレイヤーの弾移動処理
+void EnemySetShot(XY enemyPos, int enemyCount);	//一番下の敵を見つけて弾をセットする
 void EnemyShotControl(XY enemyPos, int enemyCount);	//敵の弾の移動処理
 bool PlayerCheckHitEShot(XY playerPos, bool playerFlag);	//プレイヤーと敵の弾との当たり判定
 bool EnemyCheckHitObj(XY enemyPos, bool enemyFlag);	//敵の当たり判定
