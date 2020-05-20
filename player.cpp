@@ -8,6 +8,8 @@
 //変数
 int playerImage[PLAYER_STYLE_MAX][PLAYER_ANI_MAX];	//ﾌﾟﾚｲﾔｰの画像格納用
 CHARACTER player;
+int hitCnt;
+bool hitCheck;
 
 void PlayerSystemInit(void)
 {
@@ -22,6 +24,8 @@ void PlayerGameInit(void)
 	player.speed = (PLAYER_DEF_SPEED);
 	player.flag = true;
 	player.life = PLAYER_DEF_LIFE;
+	hitCnt = 0;
+	hitCheck = false;
 
 	PlayerBrastGameInit(player.pos);
 }
@@ -66,26 +70,13 @@ void PlayerControl(void)
 
 void PlayerHitEnemy(void)
 {
-	if (PlayerCheckHitEShot(player.pos, player.flag) == true)
-	{
-		player.life--;
-		player.flag = false;
-		PlayerDeathProc();
-
-		if (player.life > 0)
-		{
-			if (player.flag == false)
-			{
-				player.flag = true;
-			}
-		}
-	}
-
 	if (PlayerCheckHitEnemy(player.pos,player.flag) == true)
 	{
-		player.life--;
-		player.flag = false;
-		PlayerDeathProc();
+		if (hitCheck == false)
+		{
+			player.life--;
+			hitCheck = true;
+		}
 
 		if (player.life > 0)
 		{
@@ -96,15 +87,38 @@ void PlayerHitEnemy(void)
 			}
 		}
 	}
+
+	Muteki();
 }
 
 void PlayerHitEShot(void)
 {
 	if (PlayerCheckHitEShot(player.pos,player.flag) == true)
 	{
-		player.flag = false;
-		player.flag = true;
-		PlayerDeathProc();
+		if (hitCheck == false)
+		{
+			player.life--;
+			hitCheck = true;
+		}
+	}
+
+	Muteki();
+}
+
+void Muteki(void)
+{
+	if (hitCheck == true)
+	{
+		hitCnt++;
+		if (hitCnt > 120)
+		{
+			hitCheck = false;
+			hitCnt = 0;
+		}
+	}
+	else
+	{
+		hitCnt = 0;
 	}
 }
 
@@ -135,18 +149,21 @@ void PlayerGameDraw(void)
 	}
 
 	//プレイヤーの表示
-	if (player.flag == true)
+	if ((hitCnt / 10) % 2 == 0)
 	{
-		if (player.aniCnt % 60 <= 30)
+		if (player.flag == true)
 		{
-			for (int x = 0; x < PLAYER_ANI_MAX; x++)
+			if (player.aniCnt % 60 <= 30)
 			{
-				DrawGraph(player.pos.x + GAME_OFFSET_X, (GAME_SIZE_Y + GAME_OFFSET_Y) - PLAYER_SIZE_Y, playerImage[PLAYER_STYLE_BACK][0], true);
+				for (int x = 0; x < PLAYER_ANI_MAX; x++)
+				{
+					DrawGraph(player.pos.x + GAME_OFFSET_X, (GAME_SIZE_Y + GAME_OFFSET_Y) - PLAYER_SIZE_Y, playerImage[PLAYER_STYLE_BACK][0], true);
+				}
 			}
-		}
-		else
-		{
-			DrawGraph(player.pos.x + GAME_OFFSET_X, (GAME_SIZE_Y + GAME_OFFSET_Y) - PLAYER_SIZE_Y, playerImage[PLAYER_STYLE_BACK][1], true);
+			else
+			{
+				DrawGraph(player.pos.x + GAME_OFFSET_X, (GAME_SIZE_Y + GAME_OFFSET_Y) - PLAYER_SIZE_Y, playerImage[PLAYER_STYLE_BACK][1], true);
+			}
 		}
 	}
 }
