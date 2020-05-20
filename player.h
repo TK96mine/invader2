@@ -34,6 +34,9 @@ void PlayerHitEnemy(void);
 //プレイヤーが敵の弾に当たった時の処理
 void PlayerHitEShot(void);
 
+//プレイヤーを無敵にするための関数
+void Muteki(void);
+
 //プレイヤーのゲームオーバー用
 bool PlayerDeathProc(void);
 
