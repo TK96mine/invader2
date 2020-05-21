@@ -7,6 +7,7 @@
 //変数の設定
 int score[SCR_MAX];	//スコア保存用
 int drawTextsCnt;	//表示するテキスト点滅用カウンター
+bool addScr;	//プレイヤーの残機に応じたスコアの加算を行うためのフラグ
 
 
 //スコアを初期化する
@@ -21,6 +22,7 @@ void InitScore(void)
 	//変数の初期化
 	score[SCR_PL1] = 0;
 	drawTextsCnt = 0;
+	addScr = false;
 }
 
 //スコアの加算処理
@@ -30,7 +32,23 @@ void AddScore(int num)
 	score[SCR_PL1] += num;
 }
 
-//スコア表示用
+void EndAddScore(int playerLife,int num)
+{
+	if (addScr == false)
+	{
+		score[SCR_PLAYER_NUM] += playerLife * num;
+		score[SCR_TOTAL] = score[SCR_PLAYER_NUM] + score[SCR_PL1];
+		addScr = true;
+	}
+	else
+	{
+
+	}
+
+	DrawFormatString((SCREEN_SIZE_X / 2) - 200, (SCREEN_SIZE_Y / 2) - 20, 0x00FF00, "playerlife %d × score %d = %d", playerLife, num, score[SCR_PLAYER_NUM]);
+	DrawFormatString((SCREEN_SIZE_X / 2) - 150, SCREEN_SIZE_Y / 2, 0x00FF00, "Score : %d + プレイヤーの残りライフ分のスコア : %d = %d", score[SCR_PL1], score[SCR_PLAYER_NUM], score[SCR_TOTAL]);
+}
+
 void DrawTexts(void)
 {
 	//プレイ中のスコア格納用
@@ -75,11 +93,11 @@ void EndGameDrawTexts(void)
 	//テキスト用カウンターのカウントをする
 	drawTextsCnt++;
 
-	DrawFormatString((SCREEN_SIZE_X / 2) - 70, SCREEN_SIZE_Y / 2, 0xFF00FF, "HIGH SCORE = %d", score[SCR_HIGH]);
+	DrawFormatString((SCREEN_SIZE_X / 2) - 70, (SCREEN_SIZE_Y / 2) + 20, 0xFF00FF, "HIGH SCORE = %d", score[SCR_HIGH]);
 
 	if (drawTextsCnt % 40 >= 20)
 	{
-		DrawFormatString((SCREEN_SIZE_X / 2) - 50, (SCREEN_SIZE_Y / 2) + 20, 0xFF00FF, "SCORE = %d", score[SCR_PL1]);
+		DrawFormatString((SCREEN_SIZE_X / 2) - 50, (SCREEN_SIZE_Y / 2) + 40, 0xFF00FF, "SCORE = %d", score[SCR_PL1]);
 	}
 
 	if (score[SCR_PL1] >= score[SCR_HIGH] && score[SCR_PL1] != 0)
