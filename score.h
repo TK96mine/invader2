@@ -8,6 +8,8 @@ enum SCORE
 {
 	SCR_PL1,
 	SCR_HIGH,
+	SCR_PLAYER_NUM,
+	SCR_TOTAL,
 	SCR_MAX
 };
 
@@ -17,5 +19,6 @@ enum SCORE
 //スコア用
 void InitScore(void);	//スコアの初期化用
 void AddScore(int num);	//スコア加算用
+void EndAddScore(int playerLife,int num);	//クリア後にプレイヤーの残機に応じてスコアを追加する
 void DrawTexts(void);	//スコア表示用
 void EndGameDrawTexts(void);	//ゲームが終わった際に表示するテキスト表示用
