@@ -40,6 +40,9 @@ void Muteki(void);
 //プレイヤーのゲームオーバー用
 bool PlayerDeathProc(void);
 
+//プレイヤーのゲーム終了時のスコア
+void PlayerEndScore(void);
+
 //ゲーム中のプレイヤーの描画用
 void PlayerGameDraw(void);	
 
