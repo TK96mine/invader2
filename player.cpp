@@ -4,6 +4,7 @@
 #include"enemy.h"
 #include"shot.h"
 #include"brast.h"
+#include"score.h"
 
 //変数
 int playerImage[PLAYER_STYLE_MAX][PLAYER_ANI_MAX];	//ﾌﾟﾚｲﾔｰの画像格納用
@@ -168,4 +169,10 @@ void PlayerGameDraw(void)
 	}
 }
 
+void PlayerEndScore(void)
+{
+	int playerScore = 100;	//プレイヤーの残機一機あたりの加えるスコアの値
+
+	EndAddScore(player.life, playerScore);
+}
 
