@@ -11,6 +11,7 @@ int playerImage[PLAYER_STYLE_MAX][PLAYER_ANI_MAX];	//ﾌﾟﾚｲﾔｰの画像格納用
 CHARACTER player;
 int hitCnt;
 bool hitCheck;
+int playerScore;	//プレイヤーの残機一機あたりの加えるスコアの値
 
 void PlayerSystemInit(void)
 {
@@ -27,6 +28,7 @@ void PlayerGameInit(void)
 	player.life = PLAYER_DEF_LIFE;
 	hitCnt = 0;
 	hitCheck = false;
+	playerScore = 100;
 
 	PlayerBrastGameInit(player.pos);
 }
@@ -171,8 +173,16 @@ void PlayerGameDraw(void)
 
 void PlayerEndScore(void)
 {
-	int playerScore = 100;	//プレイヤーの残機一機あたりの加えるスコアの値
-
 	EndAddScore(player.life, playerScore);
+}
+
+void PlayerCliarDraw(void)
+{
+	PlayerCliarScoreDraw(player.life, playerScore);
+}
+
+void PlayerGameOverDraw(void)
+{
+	PlayerGameOverScoreDraw(player.life, playerScore);
 }
 
