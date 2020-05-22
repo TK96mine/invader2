@@ -22,3 +22,5 @@ void AddScore(int num);	//スコア加算用
 void EndAddScore(int playerLife,int num);	//クリア後にプレイヤーの残機に応じてスコアを追加する
 void DrawTexts(void);	//スコア表示用
 void EndGameDrawTexts(void);	//ゲームが終わった際に表示するテキスト表示用
+void PlayerCliarScoreDraw(int playerLife, int num);	//プレイヤーのクリアしたときのスコア表示用
+void PlayerGameOverScoreDraw(int playerLife, int num);	//プレイヤーがゲームオーバーになった時のスコア表示用
