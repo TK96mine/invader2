@@ -43,8 +43,10 @@ bool PlayerDeathProc(void);
 //プレイヤーのゲーム終了時のスコア
 void PlayerEndScore(void);
 
-//ゲーム中のプレイヤーの描画用
-void PlayerGameDraw(void);	
+//プレイヤーの描画用
+void PlayerGameDraw(void);	//ゲーム中
+void PlayerCliarDraw(void);	//ゲームクリア
+void PlayerGameOverDraw(void);	//ゲームオーバー
 
 
 
