@@ -2,6 +2,10 @@
 
 #include"main.h"
 
+#include"player.h"
+
+#include"enemy.h"
+
 #include"score.h"
 
 //変数の設定
@@ -14,12 +18,13 @@ bool addScr;	//プレイヤーの残機に応じたスコアの加算を行うためのフラグ
 void InitScore(void)
 {
 	//ハイスコアの更新
-	if (score[SCR_PL1] > score[SCR_HIGH])
+	if (score[SCR_TOTAL] > score[SCR_HIGH])
 	{
-		score[SCR_HIGH] = score[SCR_PL1];
+		score[SCR_HIGH] = score[SCR_TOTAL];
 	}
 
 	//変数の初期化
+	score[SCR_TOTAL] = 0;
 	score[SCR_PL1] = 0;
 	drawTextsCnt = 0;
 	addScr = false;
@@ -44,9 +49,6 @@ void EndAddScore(int playerLife,int num)
 	{
 
 	}
-
-	DrawFormatString((SCREEN_SIZE_X / 2) - 200, (SCREEN_SIZE_Y / 2) - 20, 0x00FF00, "playerlife %d × score %d = %d", playerLife, num, score[SCR_PLAYER_NUM]);
-	DrawFormatString((SCREEN_SIZE_X / 2) - 150, SCREEN_SIZE_Y / 2, 0x00FF00, "Score : %d + プレイヤーの残りライフ分のスコア : %d = %d", score[SCR_PL1], score[SCR_PLAYER_NUM], score[SCR_TOTAL]);
 }
 
 void DrawTexts(void)
@@ -97,7 +99,7 @@ void EndGameDrawTexts(void)
 
 	if (drawTextsCnt % 40 >= 20)
 	{
-		DrawFormatString((SCREEN_SIZE_X / 2) - 50, (SCREEN_SIZE_Y / 2) + 40, 0xFF00FF, "SCORE = %d", score[SCR_PL1]);
+		DrawFormatString((SCREEN_SIZE_X / 2) - 50, (SCREEN_SIZE_Y / 2) + 40, 0xFF00FF, "SCORE = %d", score[SCR_TOTAL]);
 	}
 
 	if (score[SCR_PL1] >= score[SCR_HIGH] && score[SCR_PL1] != 0)
@@ -107,4 +109,29 @@ void EndGameDrawTexts(void)
 			DrawString((SCREEN_SIZE_X - 100) / 2, (SCREEN_SIZE_Y / 2) + 80, "'New Record' ", 0x00FFFF);
 		}
 	}
+}
+
+void PlayerCliarScoreDraw(int playerLife, int num)
+{
+	int e = LoseEnemyNum();
+	int pCliarScore = PlayerAtackEnemyScore();
+
+	DrawFormatString((SCREEN_SIZE_X / 2) - 200, (SCREEN_SIZE_Y / 2) - 40, 0x00FF00, "倒した機体数 : %d × score : %d = %d", e, num, pCliarScore);
+	DrawFormatString((SCREEN_SIZE_X / 2) - 200, (SCREEN_SIZE_Y / 2) - 20, 0x00FF00, "playerlife : %d × score : %d = %d", playerLife, num, score[SCR_PLAYER_NUM]);
+	DrawFormatString((SCREEN_SIZE_X / 2) - 250, SCREEN_SIZE_Y / 2, 0x00FF00, "Score : %d + プレイヤーの残りライフ分のスコア : %d = %d", score[SCR_PL1], score[SCR_PLAYER_NUM], score[SCR_TOTAL]);
+}
+
+void PlayerGameOverScoreDraw(int playerLife, int num)
+{
+	int e = LoseEnemyNum();
+	int pLoseScore = PlayerAtackEnemyScore();
+
+	DrawFormatString((SCREEN_SIZE_X / 2) - 200, (SCREEN_SIZE_Y / 2) - 40, 0x00FF00, "倒した機体数 : %d × score : %d = %d", e, num, pLoseScore);
+	DrawFormatString((SCREEN_SIZE_X / 2) - 200, (SCREEN_SIZE_Y / 2) - 20, 0x00FF00, "playerlife : %d × score : %d = %d", playerLife, num, score[SCR_PLAYER_NUM]);
+	DrawFormatString((SCREEN_SIZE_X / 2) - 150, SCREEN_SIZE_Y / 2, 0x00FF00, "Score : %d + プレイヤーの残りライフ分のスコア : %d = %d", score[SCR_PL1], score[SCR_PLAYER_NUM], score[SCR_TOTAL]);
+}
+
+void PlayerAtackEnemyScore(int enemyCount)
+{
+
 }
