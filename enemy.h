@@ -1,4 +1,5 @@
 //’è”
+#define ENEMY_DEF_SCORE 100	//“Gˆê‘Ì‚É‚Â‚«‰Á‚¦‚éƒXƒRƒA‚ÌƒfƒtƒHƒ‹ƒg‚Ì’l
 
 //—ñ‹“Œ^
 //“G‚Ì¶‰E‚ÌˆÚ“®—p
@@ -41,4 +42,6 @@ bool PlayerCheckHitEnemy(XY playerPos, bool playerFlag);	//ƒvƒŒƒCƒ„[‚Æ“G‚Ì“–‚½‚
 void EnemyHitObj(void);		//“G‚Æ©‹@‚Ì’e‚ª“–‚½‚Á‚½‚Ìˆ—
 void ResetEnemyPos(void);	//ƒvƒŒƒCƒ„[‚Æ“G‚ª“–‚½‚Á‚½Û‚É“G‚ÌˆÊ’u‚ğ‰Šú‰»‚·‚é
 bool PlayerClearCheck(void);	//ƒvƒŒƒCƒ„[‚ªƒNƒŠƒA‚µ‚½‚©”»’è‚·‚é‚½‚ß‚ÌŠÖ”
+int LoseEnemyNum(void);	//“G‚Ì“|‚µ‚½‹@‘Ì”‚ğ•Ô‚è’l‚Æ‚µ‚Ä•Ô‚·ŠÖ”
+int PlayerAtackEnemyScore(void);	//ƒvƒŒƒCƒ„[‚ª“|‚µ‚½“G‚Ì”‚É‰‚¶‚½ƒXƒRƒA‚Ì•\¦(•Ô‚è’l‚Æ‚µ‚ÄƒXƒRƒA‚Ì‡Œv‚ğ•Ô‚·(loseEnemyNum * score))
 void EnemyGameDraw(void);	//“G‚ÌƒQ[ƒ€ƒV[ƒ“‚Å‚Ì•`‰æ—p
