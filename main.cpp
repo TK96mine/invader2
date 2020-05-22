@@ -210,6 +210,8 @@ void Gamescene(void)
 
 void GameClear(void)
 {
+	PlayerEndScore();
+
 	DrawGraph(0, 0, clearImage, true);	
 
 	DrawString((SCREEN_SIZE_X - 140) / 2, SCREEN_SIZE_Y - 60, "PLEASE PUSH SPACEKEY", 0x0000FF);
@@ -220,8 +222,8 @@ void GameClear(void)
 	}
 
 	EndGameDrawTexts();
+	PlayerCliarDraw();
 
-	PlayerEndScore();
 
 	if (CheckHitKey(KEY_INPUT_SPACE) == 0 && spaceKeyNew != spaceKeyOld)
 	{
@@ -233,6 +235,8 @@ void GameClear(void)
 //ゲームオーバー
 void GameOverScene(void)
 {
+	PlayerEndScore();
+
 	//ゲームオーバーシーン
 	DrawExtendGraph(0, 0, SCREEN_SIZE_X, SCREEN_SIZE_Y, gameoverBgImage, true);
 	DrawGraph((SCREEN_SIZE_X - GAMEOVER_SIZE_X) / 2, (SCREEN_SIZE_Y - (GAMEOVER_SIZE_Y * 2)) / 2, gameoverImage, true);
@@ -249,8 +253,8 @@ void GameOverScene(void)
 		DrawString((SCREEN_SIZE_X - 225) / 2, 480, "スペースキーを押してください ", 0xFFFFFF);
 	}
 
+	PlayerGameOverDraw();
 	EndGameDrawTexts();
-	PlayerEndScore();
 
 	if (CheckHitKey(KEY_INPUT_SPACE) == 0 && spaceKeyNew != spaceKeyOld)
 	{
