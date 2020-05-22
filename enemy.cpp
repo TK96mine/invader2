@@ -16,7 +16,8 @@ int enemyAddSpeed;	//敵機の移動速度に加える速度
 int enemyMoveCnt;	//敵の移動用カウンター
 int estringCnt;	//敵用表示文字の点滅用カウンター
 int estringFlag;	//敵が半数切った際に文字表示するためのフラグ
-
+int enemyScore;	//敵一体につき加えるスコア
+int loseEnemyNum;	//倒した敵の数
 
 void EnemySystemInit(void)
 {
@@ -42,6 +43,8 @@ void EnemyGameInit(void)
 	enemyMoveX = MOVE_LR_RIGHT;
 	enemyCount = ENEMY_MAX;
 	enemyMoveCnt = 0;
+	enemyScore = ENEMY_DEF_SCORE;
+	loseEnemyNum = 0;
 }
 
 //敵の移動処理
@@ -223,6 +226,7 @@ void EnemyHitObj(void)
 				enemy[y][x].flag = false;
 				AddScore(100);
 				enemyCount--;
+				loseEnemyNum++;
 
 				/*
 				if (enemyCount == 0 && player.life > 0)
@@ -256,6 +260,18 @@ bool PlayerClearCheck(void)
 	}
 
 	return false;
+}
+
+int LoseEnemyNum(void)
+{
+	return loseEnemyNum;
+}
+
+int PlayerAtackEnemyScore(void)
+{
+	int eScr = loseEnemyNum * enemyScore;
+
+	return eScr;
 }
 
 void EnemyGameDraw(void)
