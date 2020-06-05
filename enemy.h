@@ -1,4 +1,11 @@
 //定数
+#define ENEMY_SIZE_X 48		//敵の横ｻｲｽﾞ
+#define ENEMY_SIZE_Y 32		//敵の縦ｻｲｽﾞ
+#define ENEMY_DEF_SPEED 5	//敵のｽﾋﾟｰﾄﾞ
+#define ENEMY_X 5			//敵の横の数
+#define ENEMY_Y 5			//敵の縦の数
+#define ENEMY_MAX  24	//敵の最大数
+#define ENEMY_ANI_MAX	2	//敵のアニメーションする画像数
 #define ENEMY_DEF_SCORE 100	//敵一体につき加えるスコアのデフォルトの値
 
 //列挙型
