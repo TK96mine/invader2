@@ -1,13 +1,15 @@
 #include"DxLib.h"
+#include"math.h"
 #include"main.h"
 #include"player.h"
+#include"enemy.h"
 #include"shot.h"
 #include"score.h"
 
 //変数
 //プレイヤー
 int pShotImage;	//プレイヤーの弾の画像格納用
-CHARACTER pShot;	//プレイヤーの弾
+CHARACTER pShot[PLAYER_SHOT_MAX];	//プレイヤーの弾
 
 //敵
 int eShotImage;	//敵の弾の画像格納用
@@ -24,10 +26,14 @@ void ShotSystemInit(void)
 
 void ShotGameInit(void)
 {
-	pShot.pos.y = 0;
-	pShot.pos.x = 0;
-	pShot.speed = PSHOT_DEF_SPEED;
-	pShot.flag = false;
+	for (int s = 0; s < PLAYER_SHOT_MAX; s++)
+	{
+		pShot[s].pos.y = 0;
+		pShot[s].pos.x = 0;
+		pShot[s].speed = PSHOT_DEF_SPEED;
+		pShot[s].flag = false;
+	}
+
 
 	for (int e = 0; e < ESHOT_MAX; e++)
 	{
@@ -41,23 +47,25 @@ void ShotGameInit(void)
 void PlayerShotControl(XY playerPos)
 {
 	//プレイヤーの弾の操作
-	if (pShot.flag == false)
+	for (int s = 0; s < PLAYER_SHOT_MAX; s++)
 	{
-		if (CheckHitKey(KEY_INPUT_SPACE) == 1)
+		if (pShot[s].flag == false)
 		{
-			pShot.flag = true;
-			pShot.pos.x = playerPos.x + (PLAYER_SIZE_X - PSHOT_SIZE_X) / 2;
-			pShot.pos.y = playerPos.y;
+			if (CheckHitKey(KEY_INPUT_SPACE) == 1)
+			{
+				pShot[s].flag = true;
+				pShot[s].pos.x = playerPos.x + (PLAYER_SIZE_X - PSHOT_SIZE_X) / 2;
+				pShot[s].pos.y = playerPos.y;
+			}
 		}
-	}
 
-	//ﾌﾟﾚｲﾔｰの弾の操作
-	if (pShot.flag == true)
-	{
-		pShot.pos.y -= pShot.speed;
-		if (pShot.pos.y < 0)
+		if (pShot[s].flag == true)
 		{
-			pShot.flag = false;
+			pShot[s].pos.y -= pShot[s].speed;
+			if (pShot[s].pos.y < 0)
+			{
+				pShot[s].flag = false;
+			}
 		}
 	}
 }
@@ -148,18 +156,21 @@ bool EnemyCheckHitObj(XY enemyPos,bool enemyFlag)
 	{
 		for (int x = 0; x < ENEMY_X; x++)
 		{
-			//自機の弾と敵の当たり判定
-			if (pShot.flag == true)
+			for (int s = 0; s < PLAYER_SHOT_MAX; s++)
 			{
-				if (enemyPos.x + ENEMY_SIZE_X >= pShot.pos.x
-					&& enemyPos.x <= pShot.pos.x + PSHOT_SIZE_X
-					&& enemyPos.y + ENEMY_SIZE_Y >= pShot.pos.y
-					&& enemyPos.y <= pShot.pos.y + PSHOT_SIZE_Y
-					&& enemyFlag == true)
+				//自機の弾と敵の当たり判定
+				if (pShot[s].flag == true)
 				{
-					pShot.flag = false;
+					if (enemyPos.x + ENEMY_SIZE_X >= pShot[s].pos.x
+						&& enemyPos.x <= pShot[s].pos.x + PSHOT_SIZE_X
+						&& enemyPos.y + ENEMY_SIZE_Y >= pShot[s].pos.y
+						&& enemyPos.y <= pShot[s].pos.y + PSHOT_SIZE_Y
+						&& enemyFlag == true)
+					{
+						pShot[s].flag = false;
 
-					return true;
+						return true;
+					}
 				}
 			}
 		}
@@ -172,9 +183,12 @@ void ShotGameDraw(void)
 {
 	//弾の表示
 	//ﾌﾟﾚｲﾔｰの弾の表示
-	if (pShot.flag == true)
+	for (int s = 0; s < PLAYER_SHOT_MAX; s++)
 	{
-		DrawGraph(pShot.pos.x + GAME_OFFSET_X, pShot.pos.y + GAME_OFFSET_Y, pShotImage, true);
+		if (pShot[s].flag == true)
+		{
+			DrawGraph(pShot[s].pos.x + GAME_OFFSET_X, pShot[s].pos.y + GAME_OFFSET_Y, pShotImage, true);
+		}
 	}
 	//敵の弾の表示
 	for (int e = 0; e < ESHOT_MAX; e++)
