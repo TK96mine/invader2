@@ -1,4 +1,5 @@
 #include"Dxlib.h"
+#include"math.h"
 #include"main.h"
 #include"player.h"
 #include"enemy.h"
