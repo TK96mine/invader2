@@ -1,4 +1,19 @@
 //定数
+//プレイヤー
+#define PLAYER_SHOT_MAX 5	//プレイヤーの弾の連射するための所持上限弾数
+#define PSHOT_SIZE_X 6		//弾の横ｻｲｽﾞ(自機）
+#define PSHOT_SIZE_Y 30		//弾の縦ｻｲｽﾞ(自機）
+#define PSHOT_DEF_SPEED	5	//弾のｽﾋﾟｰﾄﾞ(自機）
+
+//敵
+#define ESHOT_X 16		//敵の弾のX座標
+#define ESHOT_Y 25		//敵の弾のY座標
+#define ENEMY_SHOT_MAX 50	//敵の弾の最大数
+#define ESHOT_SIZE_X 16		//弾の横ｻｲｽﾞ(敵）
+#define ESHOT_SIZE_Y 25		//弾の縦ｻｲｽﾞ(敵）
+#define ESHOT_DEF_SPEED 5	//弾のｽﾋﾟｰﾄﾞ(敵）
+#define ESHOT_MAX 50	//敵弾の数
+#define ENEMY_POINT 200			//敵スコア得点数
 
 //列挙型
 
